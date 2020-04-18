@@ -100,4 +100,10 @@ public class Player extends Mob {
 		level.addEntity(new AttackParticle(x0, y0, dir));
 	}
 
+	public void touchedBy(Entity e) {
+		if(e instanceof MeleeEnemy) {
+			e.touchedBy(this);
+		}
+	}
+
 }

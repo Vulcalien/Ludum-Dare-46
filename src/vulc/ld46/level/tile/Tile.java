@@ -16,10 +16,8 @@ public abstract class Tile {
 	public static final Tile COBBLESTONE_FLOOR_SKELETON = new FloorTile(30,
 	                                                                    0, 0,
 	                                                                    0, 3);
-	public static final Tile STONE_WALL_0 = new WallTile(10,
-	                                                     0, 1);
-	public static final Tile STONE_WALL_1 = new WallTile(11,
-	                                                     1, 1);
+	public static final Tile STONE_WALL = new WallTile(10,
+	                                                   0, 1);
 
 	public final byte id;
 

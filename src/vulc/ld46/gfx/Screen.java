@@ -11,7 +11,8 @@ import vulc.ld46.level.Level;
 
 public class Screen extends IntBitmap {
 
-	public static final Font FONT = new Font(Screen.class.getResourceAsStream("/fonts/tinyfont.fv4"));
+	public static final Font SMALL_FONT = new Font(Screen.class.getResourceAsStream("/fonts/tinyfont.fv4"));
+	public static final Font NORMAL_FONT = SMALL_FONT.getScaled(2);
 
 	private static final int BACKGROUND_COLOR = 0x000000;
 
@@ -23,7 +24,8 @@ public class Screen extends IntBitmap {
 		super(Game.WIDTH, Game.HEIGHT);
 		this.game = game;
 
-		setFont(FONT);
+		setFont(NORMAL_FONT);
+		setTransparent(0xff00ff);
 	}
 
 	public void render() {
@@ -31,13 +33,17 @@ public class Screen extends IntBitmap {
 
 		Level level = game.level;
 		if(level != null) {
-			level.render(this, 10, 10);
+			level.render(this, width / Level.T_SIZE + 1, height / Level.T_SIZE + 1);
 		}
 	}
 
 	public void setOffset(int x, int y) {
 		this.xOffset = x;
 		this.yOffset = y;
+	}
+
+	public void renderSprite(Bitmap<Integer> sprite, int transparency, int x, int y) {
+		draw(sprite, transparency, x - xOffset, y - yOffset);
 	}
 
 	public void renderSprite(Bitmap<Integer> sprite, int x, int y) {

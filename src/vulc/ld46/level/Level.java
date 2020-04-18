@@ -9,18 +9,22 @@ import java.util.List;
 import vulc.ld46.Game;
 import vulc.ld46.gfx.Screen;
 import vulc.ld46.level.entity.Entity;
+import vulc.ld46.level.entity.Player;
+import vulc.ld46.level.entity.particle.Particle;
 import vulc.ld46.level.tile.Tile;
 
 public class Level {
 
 	// Tile size: the number of pixels per tile
-	public static final int T_SIZE = 32;
+	public static final int T_SIZE = 24;
 
 	public final Game game;
+	public Player player;
 
 	public final int width, height;
 	public final byte[] tiles;
 	public final List<Entity> entities = new ArrayList<Entity>();
+	public final List<Entity> particlesToRender = new ArrayList<Entity>();
 	public final List<Entity>[] entitiesInTile;
 
 	@SuppressWarnings("unchecked")
@@ -63,7 +67,10 @@ public class Level {
 	}
 
 	public void render(Screen screen, int xTiles, int yTiles) {
-		// TODO set screen's offset
+		if(player != null) {
+			screen.xOffset = player.x - screen.width / 2;
+			screen.yOffset = player.y - screen.height / 2;
+		}
 
 		int xt0 = posToTile(screen.xOffset);
 		int yt0 = posToTile(screen.yOffset);
@@ -80,9 +87,19 @@ public class Level {
 			}
 		}
 
+		particlesToRender.clear();
+
 		List<Entity> entities = getEntitiesInTile(xt0 - 1, yt0 - 1, xt1 + 1, yt1 + 1);
-		for(int i = 0; i < entities.size(); i++) {
-			entities.get(i).render(screen);
+		for(Entity e : entities) {
+			if(e instanceof Particle) {
+				particlesToRender.add(e);
+			} else {
+				e.render(screen);
+			}
+		}
+
+		for(Entity p : particlesToRender) {
+			p.render(screen);
 		}
 	}
 
@@ -101,6 +118,11 @@ public class Level {
 		insertEntityInTile(e, posToTile(e.x), posToTile(e.y));
 		e.removed = false;
 		e.level = this;
+
+		if(e instanceof Player) {
+			Player p = (Player) e;
+			this.player = p;
+		}
 	}
 
 	public void removeEntity(Entity e) {

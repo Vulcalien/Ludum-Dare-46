@@ -19,6 +19,7 @@ import java.awt.image.DataBufferInt;
 
 import javax.swing.JFrame;
 
+import vulc.ld46.gfx.Atlas;
 import vulc.ld46.gfx.Screen;
 import vulc.ld46.input.InputHandler;
 import vulc.ld46.level.Level;
@@ -27,16 +28,18 @@ public class Game extends Canvas implements Runnable {
 
 	private static final long serialVersionUID = 1L;
 
+	public static final boolean DEBUG = true; // DEBUG
+
 	// the size of the game screen (not the JFrame)
-	public static final int WIDTH = 320, HEIGHT = 320;
+	public static final int WIDTH = 360, HEIGHT = 240;
 
 	// the number of JFrame's pixels that correspond to 1 pixel of the game screen
-	public static final int SCALE = 1;
+	public static final int SCALE = 2;
 
 	private final BufferedImage img = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 	private final int[] pixels = ((DataBufferInt) img.getRaster().getDataBuffer()).getData();
 
-	public final InputHandler input = new InputHandler();
+	public static final InputHandler INPUT = new InputHandler();
 	private final Screen screen = new Screen(this);
 
 	public Level level;
@@ -61,14 +64,19 @@ public class Game extends Canvas implements Runnable {
 		}
 	}
 
-	private void init() {
-		input.init(this);
+	protected void init() {
+		INPUT.init(this);
+		Atlas.init();
+
+		if(DEBUG) Debug.init(this);
 	}
 
 	private void tick() {
-		input.tick();
+		INPUT.tick();
 
 		if(level != null) level.tick();
+
+		if(DEBUG) Debug.tick();
 	}
 
 	private void render() {
@@ -148,6 +156,10 @@ public class Game extends Canvas implements Runnable {
 		frame.add(instance);
 		frame.pack();
 		frame.setLocationRelativeTo(null);
+
+		if(DEBUG) {
+			frame.setAlwaysOnTop(true);
+		}
 		frame.setVisible(true);
 
 		instance.init();

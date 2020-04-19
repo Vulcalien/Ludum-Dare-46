@@ -6,29 +6,37 @@ import vulc.ld46.input.InputHandler.Key;
 import vulc.ld46.input.InputHandler.KeyType;
 import vulc.ld46.level.Level;
 import vulc.ld46.level.entity.Player;
-import vulc.ld46.level.entity.MeleeEnemy;
 import vulc.ld46.level.tile.Tile;
 
 public abstract class Debug {
 
 	private static Game game;
 	private static Key restartGame;
+	private static Key debugWinGame;
 
 	public static void init(Game game) {
 		Debug.game = game;
 		restartGame = Game.INPUT.new Key(KeyType.KEYBOARD, KeyEvent.VK_F5);
+		debugWinGame = Game.INPUT.new Key(KeyType.KEYBOARD, KeyEvent.VK_F9);
 
 		game.level = new Level(game, 100, 100);
 		game.level.addEntity(new Player(12, 12));
-		game.level.addEntity(new MeleeEnemy(120, 120));
+//		game.level.addEntity(new MeleeEnemy(120, 120));
 
 		game.level.setTile(Tile.COBBLESTONE_FLOOR_SKELETON, 5, 7);
 		game.level.setTile(Tile.STONE_WALL, 6, 7);
+		game.level.setTile(Tile.CHEST, 8, 8);
+
+//		game.level = LevelLoader.load(game, "/levels/brazier-map", LevelType.BRAZIER);
 	}
 
 	public static void tick() {
 		if(restartGame.isPressed()) {
+			System.out.println("asdads");
 			game.init();
+		}
+		if(debugWinGame.isPressed()) {
+			game.level.won = true;
 		}
 	}
 

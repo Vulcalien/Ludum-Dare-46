@@ -23,9 +23,16 @@ public class Level {
 
 	public final int width, height;
 	public final byte[] tiles;
+	public final byte[] data;
+
 	public final List<Entity> entities = new ArrayList<Entity>();
 	public final List<Entity> particlesToRender = new ArrayList<Entity>();
 	public final List<Entity>[] entitiesInTile;
+
+	public boolean won = false;
+	public int ticksSinceWon = 0;
+
+	public int ticks = 0;
 
 	@SuppressWarnings("unchecked")
 	public Level(Game game, int width, int height) {
@@ -35,6 +42,8 @@ public class Level {
 		this.height = height;
 
 		this.tiles = new byte[width * height];
+		this.data = new byte[width * height];
+
 		this.entitiesInTile = new ArrayList[width * height];
 		for(int i = 0; i < entitiesInTile.length; i++) {
 			entitiesInTile[i] = new ArrayList<Entity>();
@@ -64,6 +73,8 @@ public class Level {
 				}
 			}
 		}
+		ticks++;
+		if(won) ticksSinceWon++;
 	}
 
 	public void render(Screen screen, int xTiles, int yTiles) {
@@ -113,6 +124,16 @@ public class Level {
 		return Tile.TILES[tiles[xt + yt * width]];
 	}
 
+	public void setData(byte data, int xt, int yt) {
+		if(xt < 0 || xt >= width || yt < 0 || yt >= height) return;
+		this.data[xt + yt * width] = data;
+	}
+
+	public byte getData(int xt, int yt) {
+		if(xt < 0 || xt >= width || yt < 0 || yt >= height) return 0;
+		return data[xt + yt * width];
+	}
+
 	public void addEntity(Entity e) {
 		entities.add(e);
 		insertEntityInTile(e, posToTile(e.x), posToTile(e.y));
@@ -129,6 +150,8 @@ public class Level {
 		entities.remove(e);
 		removeEntityFromTile(e, posToTile(e.y), posToTile(e.y));
 		e.removed = true;
+
+		if(e == player) player = null;
 	}
 
 	private void insertEntityInTile(Entity e, int xt, int yt) {

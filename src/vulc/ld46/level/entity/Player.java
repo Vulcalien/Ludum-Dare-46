@@ -3,13 +3,17 @@ package vulc.ld46.level.entity;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
-import vulc.bitmap.IntBitmap;
+import vulc.bitmap.Bitmap;
 import vulc.ld46.Game;
+import vulc.ld46.gfx.Atlas;
 import vulc.ld46.gfx.Screen;
 import vulc.ld46.input.InputHandler;
 import vulc.ld46.input.InputHandler.Key;
 import vulc.ld46.input.InputHandler.KeyType;
+import vulc.ld46.item.inventory.Inventory;
+import vulc.ld46.level.Level;
 import vulc.ld46.level.entity.particle.AttackParticle;
+import vulc.ld46.level.tile.Tile;
 
 public class Player extends Mob {
 
@@ -17,10 +21,16 @@ public class Player extends Mob {
 
 	private final Key w, a, s, d,
 	        attack, interact,
-	        inventory;
+	        toggleInventory;
+
+	public Inventory inventory = new Inventory();
 
 	private int ticks = 0;
 	private int lastAttack = -60;
+
+	private int moveCount = 0;
+	private boolean moving = false;
+	private int invulnerable = 0;
 
 	public Player(int x, int y) {
 		super(x, y, 13);
@@ -33,13 +43,16 @@ public class Player extends Mob {
 
 		attack = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_L);
 		interact = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_P);
-		inventory = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_I);
-		// TODO
-		xr = yr = 12;
+		toggleInventory = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_I);
+		// TODO player xr and yr
+		xr = 6;
+		yr = 12;
 	}
 
 	public void tick() {
 		ticks++;
+
+		if(invulnerable > 0) invulnerable--;
 
 		int speed = 2;
 		int xm = 0, ym = 0;
@@ -50,6 +63,13 @@ public class Player extends Mob {
 		if(d.isKeyDown()) xm += speed;
 
 		move(xm, ym);
+
+		if(xm != 0 || ym != 0) {
+			moving = true;
+			moveCount++;
+		} else {
+			moving = false;
+		}
 
 		// attack
 		if(attack.isPressed()) {
@@ -62,11 +82,39 @@ public class Player extends Mob {
 			else if(dir == 2) attack(x - xar, y + range - yar, x + xar, y + range + yar);
 			else if(dir == 3) attack(x + range - yar, y - xar, x + range + yar, y + xar);
 		}
+
+		if(interact.isPressed()) {
+			int range = 18;
+
+			if(dir == 0) interact(x, y - range);
+			else if(dir == 1) interact(x - range, y);
+			else if(dir == 2) interact(x, y + range);
+			else if(dir == 3) interact(x + range, y);
+		}
 	}
 
 	public void render(Screen screen) {
-		// TODO
-		screen.renderSprite(new IntBitmap(24, 24, 0xff0000), x - 12, y - 12);
+		// if invulnerable == 0, will render
+		// if invulnerable != 0, will show "flash" effect
+		if((invulnerable / 8) % 2 == 0) {
+			// TODO player sprite
+//			screen.renderSprite(new IntBitmap(24, 24, 0xff0000), x - 12, y - 12);
+			Bitmap<Integer> sprite = null;
+			if(moving) {
+				if(dir == 0) sprite = Atlas.getEntity(3, 0).getFlipped((moveCount / 10) % 2 == 0, false);
+				else if(dir == 1) sprite = Atlas.getEntity(1 + (moveCount / 10) % 2, 0).getFlipped(true, false);
+				else if(dir == 2) sprite = Atlas.getEntity(0, 0).getFlipped((moveCount / 10) % 2 == 0, false);
+				else if(dir == 3) sprite = Atlas.getEntity(1 + (moveCount / 10) % 2, 0).getFlipped(false, false);
+				else return;
+			} else {
+				if(dir == 0) sprite = Atlas.getEntity(2, 1);
+				else if(dir == 1) sprite = Atlas.getEntity(1, 1).getFlipped(true, false);
+				else if(dir == 2) sprite = Atlas.getEntity(0, 1);
+				else if(dir == 3) sprite = Atlas.getEntity(1, 1);
+				else return;
+			}
+			screen.renderSprite(sprite, x - 12, y - 12);
+		}
 
 		if(Game.DEBUG) {
 			screen.write("dir:" + dir + "\n"
@@ -100,9 +148,25 @@ public class Player extends Mob {
 		level.addEntity(new AttackParticle(x0, y0, dir));
 	}
 
+	public void interact(int x, int y) {
+		int xt = Level.posToTile(x);
+		int yt = Level.posToTile(y);
+
+		Tile tile = level.getTile(xt, yt);
+		if(tile != null)
+		    tile.interactOn(this, level, xt, yt);
+	}
+
 	public void touchedBy(Entity e) {
 		if(e instanceof MeleeEnemy) {
 			e.touchedBy(this);
+		}
+	}
+
+	public void damage(int dmg, int xKnockback, int yKnockback, Entity attacker) {
+		if(invulnerable == 0) {
+			super.damage(dmg, xKnockback, yKnockback, attacker);
+			invulnerable = 60;
 		}
 	}
 

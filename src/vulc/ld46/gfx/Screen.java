@@ -50,4 +50,8 @@ public class Screen extends IntBitmap {
 		draw(sprite, x - xOffset, y - yOffset);
 	}
 
+	public void writeCentred(String text, int color, int x, int y) {
+		super.write(text, color, x - xOffset - getFont().widthOf(text) / 2, y - yOffset);
+	}
+
 }

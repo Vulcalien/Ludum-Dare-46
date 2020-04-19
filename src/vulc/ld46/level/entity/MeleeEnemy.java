@@ -28,7 +28,7 @@ public class MeleeEnemy extends Mob {
 	}
 
 	public void render(Screen screen) {
-		// TODO
+		// TODO melee enemy sprite
 		screen.renderSprite(new IntBitmap(24, 24, 0xffff00), x - 12, y - 12);
 
 		if(Game.DEBUG) {

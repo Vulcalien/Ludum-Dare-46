@@ -28,7 +28,7 @@ public class Game extends Canvas implements Runnable {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final boolean DEBUG = true; // DEBUG
+	public static final boolean DEBUG = true; // DEBUG toggle debug
 
 	// the size of the game screen (not the JFrame)
 	public static final int WIDTH = 360, HEIGHT = 240;

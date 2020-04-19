@@ -34,14 +34,13 @@ public abstract class Debug {
 		game.level.setTile(Tile.COAL_TILE, 10, 10);
 		game.level.setTile(Tile.FIRE_TILE, 3, 3);
 
-		game.switchToLevel(LevelLoader.load(game, "/levels/brazier-map"));
+		game.switchToLevel(LevelLoader.next(game));
 
 		game.level.player.hasFire = true;
 	}
 
 	public static void tick() {
 		if(restartGame.isPressed()) {
-			System.out.println("asdads");
 			game.init();
 		}
 		if(debugWinGame.isPressed()) {

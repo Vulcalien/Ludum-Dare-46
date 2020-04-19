@@ -49,7 +49,7 @@ public class Player extends Mob {
 		interact = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_P);
 
 		xr = 6;
-		yr = 12;
+		yr = 11;
 	}
 
 	public void tick() {

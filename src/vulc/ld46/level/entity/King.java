@@ -7,20 +7,27 @@ import vulc.ld46.level.entity.particle.TextParticle;
 
 public class King extends Mob {
 
-	private static final String[] TEXTS = {
-	    "a1",
-	    "text 2",
-	    "text 3"
+	private static final String[][] TEXTS = {
+	    new String[] {
+	        "text TODO", // TODO
+	    },
+	    new String[] {
+
+		}
 	};
+
+	private final String[] dialogueSet;
 
 	private int currentText = -1;
 	private TextParticle textParticle;
 
-	public King(int xt, int yt) {
+	public King(int xt, int yt, int dialogueSet) {
 		super(Level.tileToPos(xt) + Level.T_SIZE, Level.tileToPos(yt) + Level.T_SIZE, 1_000_000);
 
 		xr = 18;
 		yr = 18;
+
+		this.dialogueSet = TEXTS[dialogueSet];
 	}
 
 	public void render(Screen screen) {
@@ -29,10 +36,10 @@ public class King extends Mob {
 
 	public void damage(int dmg, int xKnockback, int yKnockback, Entity attacker) {
 		currentText++;
-		if(textParticle != null) level.removeEntity(textParticle);
+		if(textParticle != null) textParticle.remove();
 
-		if(TEXTS.length > currentText) {
-			textParticle = new TextParticle(x, y - Level.T_SIZE, TEXTS[currentText]);
+		if(dialogueSet.length > currentText) {
+			textParticle = new TextParticle(x, y - Level.T_SIZE, dialogueSet[currentText]);
 			level.addEntity(textParticle);
 		} else {
 			currentText = -1;

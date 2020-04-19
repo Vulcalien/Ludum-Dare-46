@@ -4,6 +4,14 @@ import vulc.ld46.gfx.Screen;
 
 public class TextParticle extends Particle {
 
+	public static final String[] TEXTS = {
+	    "Welcome to [game name]", // TODO
+	    "Use WASD to move",
+	    "Use L to attack",
+	    "Use P to interact (chests and others)",
+	    "Use L (attack) to talk to the king"
+	};
+
 	public String text;
 
 	public TextParticle(int x, int y, String text) {

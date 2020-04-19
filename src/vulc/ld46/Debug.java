@@ -5,7 +5,6 @@ import java.awt.event.KeyEvent;
 import vulc.ld46.input.InputHandler.Key;
 import vulc.ld46.input.InputHandler.KeyType;
 import vulc.ld46.level.Level;
-import vulc.ld46.level.entity.Player;
 import vulc.ld46.level.tile.Tile;
 
 public abstract class Debug {
@@ -20,12 +19,18 @@ public abstract class Debug {
 		debugWinGame = Game.INPUT.new Key(KeyType.KEYBOARD, KeyEvent.VK_F9);
 
 		game.level = new Level(game, 100, 100);
-		game.level.addEntity(new Player(12, 12));
+
+		game.player.x = 12;
+		game.player.y = 12;
+		game.level.addEntity(game.player);
+
 //		game.level.addEntity(new MeleeEnemy(120, 120));
 
 		game.level.setTile(Tile.COBBLESTONE_FLOOR_SKELETON, 5, 7);
 		game.level.setTile(Tile.STONE_WALL, 6, 7);
 		game.level.setTile(Tile.CHEST, 8, 8);
+
+		game.level.setTile(Tile.COAL_TILE, 10, 10);
 
 //		game.level = LevelLoader.load(game, "/levels/brazier-map", LevelType.BRAZIER);
 	}

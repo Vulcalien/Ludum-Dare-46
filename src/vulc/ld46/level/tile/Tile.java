@@ -28,6 +28,9 @@ public abstract class Tile {
 	public static final Tile BRAZIER_2 = new BrazierTile(16, 0, 1);
 	public static final Tile BRAZIER_3 = new BrazierTile(17, 1, 1);
 
+	// coal tile
+	public static final Tile COAL_TILE = new CoalTile(11);
+
 	public final byte id;
 
 	public Tile(int id) {
@@ -50,14 +53,7 @@ public abstract class Tile {
 
 	// return false if could not interact
 	// return true if could interact
-//	public boolean interactOn(Entity e, Level level, int xt, int yt) {
-//		return false;
-//	}
-
-	// DEBUG
 	public boolean interactOn(Entity e, Level level, int xt, int yt) {
-		System.out.println("touched: " + xt + " " + yt);
-		level.setTile(Tile.GRASS_FLOOR, xt, yt);
 		return false;
 	}
 

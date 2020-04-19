@@ -10,20 +10,24 @@ import vulc.ld46.gfx.Screen;
 import vulc.ld46.input.InputHandler;
 import vulc.ld46.input.InputHandler.Key;
 import vulc.ld46.input.InputHandler.KeyType;
-import vulc.ld46.item.inventory.Inventory;
+import vulc.ld46.item.Item;
 import vulc.ld46.level.Level;
 import vulc.ld46.level.entity.particle.AttackParticle;
 import vulc.ld46.level.tile.Tile;
 
 public class Player extends Mob {
 
+	public static final int FIRE_HP = 60 * 60; // ticks
+
 	private final InputHandler input;
 
 	private final Key w, a, s, d,
-	        attack, interact,
-	        toggleInventory;
+	        attack, interact;
 
-	public Inventory inventory = new Inventory();
+	public Item weapon = null;
+
+	public boolean hasFire = false;
+	public int fireHp = 0;
 
 	private int ticks = 0;
 	private int lastAttack = -60;
@@ -32,8 +36,8 @@ public class Player extends Mob {
 	private boolean moving = false;
 	private int invulnerable = 0;
 
-	public Player(int x, int y) {
-		super(x, y, 13);
+	public Player() {
+		super(-1, -1, 13);
 		this.input = Game.INPUT;
 
 		w = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_W);
@@ -43,7 +47,6 @@ public class Player extends Mob {
 
 		attack = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_L);
 		interact = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_P);
-		toggleInventory = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_I);
 		// TODO player xr and yr
 		xr = 6;
 		yr = 12;
@@ -91,14 +94,17 @@ public class Player extends Mob {
 			else if(dir == 2) interact(x, y + range);
 			else if(dir == 3) interact(x + range, y);
 		}
+
+		if(hasFire) {
+			fireHp--;
+			if(fireHp < 0) lose();
+		}
 	}
 
 	public void render(Screen screen) {
 		// if invulnerable == 0, will render
 		// if invulnerable != 0, will show "flash" effect
 		if((invulnerable / 8) % 2 == 0) {
-			// TODO player sprite
-//			screen.renderSprite(new IntBitmap(24, 24, 0xff0000), x - 12, y - 12);
 			Bitmap<Integer> sprite = null;
 			if(moving) {
 				if(dir == 0) sprite = Atlas.getEntity(3, 0).getFlipped((moveCount / 10) % 2 == 0, false);
@@ -168,6 +174,17 @@ public class Player extends Mob {
 			super.damage(dmg, xKnockback, yKnockback, attacker);
 			invulnerable = 60;
 		}
+	}
+
+	private void lose() {
+	}
+
+	public void addCoal() {
+		fireHp = FIRE_HP;
+	}
+
+	public void eatFood() {
+		// TODO
 	}
 
 }

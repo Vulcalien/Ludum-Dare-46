@@ -3,10 +3,9 @@ package vulc.ld46.level.tile;
 import vulc.ld46.gfx.Atlas;
 import vulc.ld46.gfx.Screen;
 import vulc.ld46.item.Item;
-import vulc.ld46.item.stack.Stack;
-import vulc.ld46.item.stack.StackableStack;
 import vulc.ld46.level.Level;
 import vulc.ld46.level.entity.Entity;
+import vulc.ld46.level.entity.Player;
 
 public class ChestTile extends Tile {
 
@@ -23,24 +22,25 @@ public class ChestTile extends Tile {
 
 	public boolean interactOn(Entity e, Level level, int xt, int yt) {
 		byte data = level.getData(xt, yt);
-		if(data <= 0) return false;
 
-		// add item to inventory
-		Stack stack;
-		Item item = Item.ITEMS[data - 1];
+		// open the chest
+		if(data > 0) {
+			level.setData((byte) -data, xt, yt); // data < 0 => open
+			return true;
+		}
 
-		if(item.isStackable()) {
-			int amount = -1; // TODO
-			stack = new StackableStack(item, amount);
+		byte item = (byte) Math.abs(data);
+
+		Player player = level.player;
+		if(item == 120) {
+			player.eatFood();
 		} else {
-			stack = new Stack(item);
-		}
+			Item playerWeapon = player.weapon;
+			Item inChest = Item.ITEMS.get(item - 1);
 
-		if(level.player != null) {
-			level.player.inventory.addStack(stack);
+			player.weapon = inChest;
+			level.setData((byte) -playerWeapon.id, xt, yt);
 		}
-
-		level.setData((byte) -1, xt, yt); // data < 0 => open
 		return true;
 	}
 

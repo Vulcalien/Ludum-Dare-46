@@ -8,6 +8,7 @@ import vulc.bitmap.IntBitmap;
 import vulc.bitmap.font.Font;
 import vulc.ld46.Game;
 import vulc.ld46.level.Level;
+import vulc.ld46.level.entity.Player;
 
 public class Screen extends IntBitmap {
 
@@ -31,10 +32,37 @@ public class Screen extends IntBitmap {
 	public void render() {
 		clear(BACKGROUND_COLOR);
 
-		Level level = game.level;
-		if(level != null) {
-			level.render(this, width / Level.T_SIZE + 1, height / Level.T_SIZE + 1);
+		boolean levelRenders = true;
+		if(game.menu != null) {
+			levelRenders = game.menu.levelRenders();
 		}
+
+		if(levelRenders) {
+			Level level = game.level;
+			if(level != null) {
+				level.render(this, width / Level.T_SIZE + 1, height / Level.T_SIZE + 1);
+
+				fill(0, height - 20, width, height, 0xbbbbbb);
+
+				fill(1, height - 19, 102, height - 2, 0x333333);
+				draw(Atlas.heart, 104, height - 11);
+
+				fill(width - 103, height - 19, width - 2, height - 2, 0x333333);
+				draw(Atlas.fire_icon, width - 114, height - 11);
+
+				Player player = level.player;
+				if(player != null) {
+					fill(2, height - 18, 1 + 100 * player.hp / player.maxHp, height - 3, 0xff0000); // hp bar
+
+					if(player.hasFire) {
+						fill(width - 2 - 100 * player.fireHp / Player.FIRE_HP, height - 18,
+						     width - 3, height - 3,
+						     0x0000ff); // fire bar
+					}
+				}
+			}
+		}
+		if(game.menu != null) game.menu.render();
 	}
 
 	public void setOffset(int x, int y) {

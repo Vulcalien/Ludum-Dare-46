@@ -21,8 +21,10 @@ import javax.swing.JFrame;
 
 import vulc.ld46.gfx.Atlas;
 import vulc.ld46.gfx.Screen;
+import vulc.ld46.gfx.menu.Menu;
 import vulc.ld46.input.InputHandler;
 import vulc.ld46.level.Level;
+import vulc.ld46.level.entity.Player;
 
 public class Game extends Canvas implements Runnable {
 
@@ -43,6 +45,8 @@ public class Game extends Canvas implements Runnable {
 	private final Screen screen = new Screen(this);
 
 	public Level level;
+	public Player player = new Player();
+	public Menu menu;
 
 	private Thread thread;
 	private boolean running = false;
@@ -74,7 +78,13 @@ public class Game extends Canvas implements Runnable {
 	private void tick() {
 		INPUT.tick();
 
-		if(level != null) level.tick();
+		boolean levelTicks = true;
+		if(menu != null) {
+			levelTicks = menu.levelTicks();
+		}
+
+		if(levelTicks && level != null) level.tick();
+		if(menu != null) menu.tick();
 
 		if(DEBUG) Debug.tick();
 	}

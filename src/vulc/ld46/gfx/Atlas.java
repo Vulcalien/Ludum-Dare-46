@@ -18,6 +18,8 @@ public abstract class Atlas {
 	private static Bitmap<Integer> items;
 
 	public static Bitmap<Integer> attack_particle;
+	public static Bitmap<Integer> heart;
+	public static Bitmap<Integer> fire_icon;
 
 	public static Bitmap<Integer> getTile(int x, int y, int w, int h) {
 		return tiles.getSubimage(x * T_SIZE, y * T_SIZE, w * T_SIZE, h * T_SIZE);
@@ -57,6 +59,8 @@ public abstract class Atlas {
 			result.draw(attack_particle.getFlipped(true, false), result.width / 2, 0);
 			attack_particle = result;
 		}
+		heart = new IntBitmap(getBufferedImage("/gfx/heart.png"));
+		fire_icon = new IntBitmap(getBufferedImage("/gfx/fire_icon.png"));
 	}
 
 	private static BufferedImage getBufferedImage(String resource) {

@@ -1,21 +1,23 @@
 package vulc.ld46.item;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import vulc.bitmap.Bitmap;
 import vulc.ld46.gfx.Screen;
 
 public abstract class Item {
 
-	public static final Item[] ITEMS = new Item[100];
+	public static final List<Item> ITEMS = new ArrayList<Item>();
 	public byte id;
 
 	public static final int ITEM_SPR_SIZE = 16;
 
-	public Item(int id) {
-		this.id = (byte) id;
-		if(ITEMS[id] != null) {
-			throw new RuntimeException("Duplicate item ids");
+	public Item() {
+		ITEMS.add(this);
+		if(ITEMS.size() > 100) {
+			System.err.println("error: too many items");
 		}
-		ITEMS[id] = this;
 	}
 
 	public boolean isStackable() {

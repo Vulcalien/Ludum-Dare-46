@@ -2,7 +2,7 @@ package vulc.ld46.level.entity;
 
 public abstract class Mob extends Entity {
 
-	public int dir;
+	public int dir = 2;
 	public int xKnockback, yKnockback;
 
 	public int maxHp;

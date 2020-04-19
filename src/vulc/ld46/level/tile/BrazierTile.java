@@ -3,6 +3,7 @@ package vulc.ld46.level.tile;
 import vulc.ld46.gfx.Atlas;
 import vulc.ld46.gfx.Screen;
 import vulc.ld46.level.Level;
+import vulc.ld46.level.entity.Entity;
 
 public class BrazierTile extends WallTile {
 
@@ -23,6 +24,11 @@ public class BrazierTile extends WallTile {
 			                    level.ticksSinceWon > 90 ? 0xff : 0xff * level.ticksSinceWon / 90,
 			                    Level.tileToPos(xt - 1), Level.tileToPos(yt - 1));
 		}
+	}
+
+	public boolean interactOn(Entity e, Level level, int xt, int yt) {
+		if(level.player.hasFire) level.won = true;
+		return true;
 	}
 
 }

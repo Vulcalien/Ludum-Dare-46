@@ -3,11 +3,13 @@ package vulc.ld46.level.entity;
 import vulc.bitmap.IntBitmap;
 import vulc.ld46.Game;
 import vulc.ld46.gfx.Screen;
+import vulc.ld46.level.Level;
 
 public class MeleeEnemy extends Mob {
 
-	public MeleeEnemy(int x, int y) {
-		super(x, y, 100);
+	public MeleeEnemy(int xt, int yt) {
+		super(Level.tileToPos(xt) + Level.T_SIZE / 2, Level.tileToPos(yt) + Level.T_SIZE / 2,
+		      100);
 		xr = yr = 12;
 		hp = 100;
 	}

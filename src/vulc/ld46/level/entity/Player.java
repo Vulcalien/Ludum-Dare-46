@@ -47,7 +47,7 @@ public class Player extends Mob {
 
 		attack = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_L);
 		interact = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_P);
-		// TODO player xr and yr
+
 		xr = 6;
 		yr = 12;
 	}

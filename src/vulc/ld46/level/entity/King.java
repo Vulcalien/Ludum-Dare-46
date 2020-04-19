@@ -3,36 +3,40 @@ package vulc.ld46.level.entity;
 import vulc.ld46.gfx.Atlas;
 import vulc.ld46.gfx.Screen;
 import vulc.ld46.level.Level;
+import vulc.ld46.level.entity.particle.TextParticle;
 
-public class King extends Entity {
+public class King extends Mob {
+
+	private static final String[] TEXTS = {
+	    "a1",
+	    "text 2",
+	    "text 3"
+	};
+
+	private int currentText = -1;
+	private TextParticle textParticle;
 
 	public King(int xt, int yt) {
-		this.x = Level.tileToPos(xt) + Level.T_SIZE;
-		this.y = Level.tileToPos(yt) + Level.T_SIZE;
+		super(Level.tileToPos(xt) + Level.T_SIZE, Level.tileToPos(yt) + Level.T_SIZE, 1_000_000);
+
+		xr = 18;
+		yr = 18;
 	}
 
 	public void render(Screen screen) {
 		screen.renderSprite(Atlas.getEntity(0, 3, 2, 2), x - Level.T_SIZE, y - Level.T_SIZE);
+	}
 
-		screen.setFont(Screen.SMALL_FONT);
+	public void damage(int dmg, int xKnockback, int yKnockback, Entity attacker) {
+		currentText++;
+		if(textParticle != null) level.removeEntity(textParticle);
 
-		String text = "bravo hai vinto";
-		int wText = Screen.SMALL_FONT.widthOf(text);
-
-		screen.fill(x - wText / 2 - 3 - screen.xOffset,
-		            y - Level.T_SIZE * 2 - 3 - screen.yOffset,
-		            x + wText / 2 + 3 - screen.xOffset,
-		            y - Level.T_SIZE * 2 + screen.getFont().getHeight() + 2 - screen.yOffset,
-		            0x444444);
-
-		screen.fill(x - wText / 2 - 1 - screen.xOffset,
-		            y - Level.T_SIZE * 2 - 1 - screen.yOffset,
-		            x + wText / 2 + 1 - screen.xOffset,
-		            y - Level.T_SIZE * 2 + screen.getFont().getHeight() - screen.yOffset,
-		            0xffffff);
-		screen.writeCentred(text, 0x000000, x, y - Level.T_SIZE * 2);
-
-		screen.setFont(Screen.NORMAL_FONT);
+		if(TEXTS.length > currentText) {
+			textParticle = new TextParticle(x, y - Level.T_SIZE, TEXTS[currentText]);
+			level.addEntity(textParticle);
+		} else {
+			currentText = -1;
+		}
 	}
 
 }

@@ -21,6 +21,8 @@ public class Level {
 	public final Game game;
 	public Player player;
 
+	public int xSpawn, ySpawn;
+
 	public final int width, height;
 	public final byte[] tiles;
 	public final byte[] data;

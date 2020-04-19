@@ -108,6 +108,13 @@ public class Game extends Canvas implements Runnable {
 		bs.show();
 	}
 
+	public void switchToLevel(Level level) {
+		this.level = level;
+		player.x = Level.tileToPos(level.xSpawn) + Level.T_SIZE / 2;
+		player.y = Level.tileToPos(level.ySpawn) + Level.T_SIZE / 2;
+		level.addEntity(player);
+	}
+
 	public void run() {
 		int ticksPerSecond = 60;
 		int ticks = 0, fps = 0;

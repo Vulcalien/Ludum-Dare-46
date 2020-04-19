@@ -31,6 +31,9 @@ public abstract class Tile {
 	// coal tile
 	public static final Tile COAL_TILE = new CoalTile(11);
 
+	// fire tile
+	public static final Tile FIRE_TILE = new FireTile(12);
+
 	public final byte id;
 
 	public Tile(int id) {

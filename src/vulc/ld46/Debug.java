@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import vulc.ld46.input.InputHandler.Key;
 import vulc.ld46.input.InputHandler.KeyType;
 import vulc.ld46.level.Level;
+import vulc.ld46.level.LevelLoader;
 import vulc.ld46.level.tile.Tile;
 
 public abstract class Debug {
@@ -31,8 +32,11 @@ public abstract class Debug {
 		game.level.setTile(Tile.CHEST, 8, 8);
 
 		game.level.setTile(Tile.COAL_TILE, 10, 10);
+		game.level.setTile(Tile.FIRE_TILE, 3, 3);
 
-//		game.level = LevelLoader.load(game, "/levels/brazier-map", LevelType.BRAZIER);
+		game.switchToLevel(LevelLoader.load(game, "/levels/brazier-map"));
+
+		game.level.player.hasFire = true;
 	}
 
 	public static void tick() {

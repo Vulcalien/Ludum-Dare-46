@@ -33,6 +33,8 @@ public class InputHandler implements KeyListener, MouseListener {
 		game.addMouseListener(this);
 
 		game.requestFocus();
+		game.requestFocus();
+		game.requestFocus();
 	}
 
 	public void tick() {

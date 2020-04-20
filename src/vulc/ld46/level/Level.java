@@ -8,7 +8,9 @@ import java.util.List;
 
 import vulc.ld46.Game;
 import vulc.ld46.gfx.Screen;
+import vulc.ld46.gfx.menu.YouWinMenu;
 import vulc.ld46.level.entity.Entity;
+import vulc.ld46.level.entity.MeleeEnemy;
 import vulc.ld46.level.entity.Player;
 import vulc.ld46.level.entity.particle.Particle;
 import vulc.ld46.level.tile.Tile;
@@ -35,6 +37,11 @@ public class Level {
 	public int ticksSinceWon = 0;
 
 	public int ticks = 0;
+
+	public boolean isTutorialLevel = false;
+	public int tutorialTODO = 3;
+
+	public int remainingEnemies = 0;
 
 	@SuppressWarnings("unchecked")
 	public Level(Game game, int width, int height) {
@@ -76,7 +83,12 @@ public class Level {
 			}
 		}
 		ticks++;
-		if(won) ticksSinceWon++;
+		if(won) {
+			ticksSinceWon++;
+			if(ticksSinceWon > 120) {
+				game.menu = new YouWinMenu(game);
+			}
+		}
 	}
 
 	public void render(Screen screen, int xTiles, int yTiles) {
@@ -118,6 +130,7 @@ public class Level {
 
 	public void setTile(Tile tile, int xt, int yt) {
 		if(xt < 0 || xt >= width || yt < 0 || yt >= height) return;
+		tile.onSetTile(this, xt, yt);
 		tiles[xt + yt * width] = tile.id;
 	}
 
@@ -145,6 +158,10 @@ public class Level {
 		if(e instanceof Player) {
 			Player p = (Player) e;
 			this.player = p;
+		}
+
+		if(e instanceof MeleeEnemy) {
+			remainingEnemies++;
 		}
 	}
 

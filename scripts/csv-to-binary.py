@@ -9,7 +9,7 @@ def to1byte(num):
     return num.to_bytes(1, 'big')
 
 # without .csv
-file_path = 'res/levels/brazier-map'
+file_path = 'res/levels/room-8'
 
 csv_path = file_path + '.csv'
 

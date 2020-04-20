@@ -8,17 +8,38 @@ import vulc.ld46.Game;
 import vulc.ld46.level.entity.King;
 import vulc.ld46.level.entity.MeleeEnemy;
 import vulc.ld46.level.entity.particle.TextParticle;
+import vulc.ld46.level.tile.Tile;
 
 public abstract class LevelLoader {
 
 	public static final String[][] LEVEL_LIST = {
 	    new String[] {"brazier-map", "brazier-welcome.entities"},
+	    new String[] {"room-0", "room-0.entities"},
+	    new String[] {"room-1", "room-1.entities"},
+	    new String[] {"room-2", "room-2.entities"},
+	    new String[] {"room-3", "room-3.entities"},
+	    new String[] {"room-4", "room-4.entities"},
+	    new String[] {"room-5", "room-5.entities"},
+	    new String[] {"room-6", "room-6.entities"},
+	    new String[] {"room-7", "room-7.entities"},
+	    new String[] {"room-8", "room-8.entities"},
+	    new String[] {"brazier-map", "brazier-end.entities"}
 	};
 
 	public static int currentLevel = -1;
 
+	public static boolean hasNext() {
+		return currentLevel + 1 < LEVEL_LIST.length;
+	}
+
 	public static Level next(Game game) {
 		currentLevel++;
+		return load(game,
+		            "/levels/" + LEVEL_LIST[currentLevel][0],
+		            "/levels/" + LEVEL_LIST[currentLevel][1]);
+	}
+
+	public static Level current(Game game) {
 		return load(game,
 		            "/levels/" + LEVEL_LIST[currentLevel][0],
 		            "/levels/" + LEVEL_LIST[currentLevel][1]);
@@ -30,9 +51,11 @@ public abstract class LevelLoader {
 			try(DataInputStream in = new DataInputStream(LevelLoader.class.getResourceAsStream(level))) {
 
 				result = new Level(game, in.readInt(), in.readInt());
+				if(currentLevel == 1) result.isTutorialLevel = true;
 
 				for(int i = 0; i < result.tiles.length; i++) {
 					result.tiles[i] = in.readByte();
+					Tile.TILES[result.tiles[i]].onSetTile(result, i % result.width, i / result.height);
 				}
 			}
 			try(InputStream in = LevelLoader.class.getResourceAsStream(entities)) {

@@ -34,6 +34,10 @@ public abstract class Tile {
 	// fire tile
 	public static final Tile FIRE_TILE = new FireTile(12);
 
+	// door
+	public static final Tile ENTER_DOOR = new DoorTile(13, false);
+	public static final Tile EXIT_DOOR = new DoorTile(14, true);
+
 	public final byte id;
 
 	public Tile(int id) {

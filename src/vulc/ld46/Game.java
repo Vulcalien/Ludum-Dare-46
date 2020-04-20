@@ -1,7 +1,6 @@
 /*******************************************************************************
  * Ludum Dare 46 Game:
  * Copyright 2020 Vulcalien
- * TODO add co-authors (here and in LICENSE file)
  *
  * Vulc-Engine:
  * Copyright 2019 Vulcalien
@@ -16,21 +15,26 @@ import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 
 import vulc.ld46.gfx.Atlas;
 import vulc.ld46.gfx.Screen;
 import vulc.ld46.gfx.menu.Menu;
+import vulc.ld46.gfx.menu.StartMenu;
 import vulc.ld46.input.InputHandler;
+import vulc.ld46.input.Keys;
 import vulc.ld46.level.Level;
 import vulc.ld46.level.entity.Player;
+import vulc.ld46.sfx.Sounds;
 
 public class Game extends Canvas implements Runnable {
 
 	private static final long serialVersionUID = 1L;
 
-	public static final boolean DEBUG = true; // DEBUG toggle debug
+	public static final boolean DEBUG = false; // DEBUG toggle debug
 
 	// the size of the game screen (not the JFrame)
 	public static final int WIDTH = 360, HEIGHT = 240;
@@ -71,6 +75,10 @@ public class Game extends Canvas implements Runnable {
 	protected void init() {
 		INPUT.init(this);
 		Atlas.init();
+		Sounds.init();
+		Keys.init(INPUT);
+
+		menu = new StartMenu(this);
 
 		if(DEBUG) Debug.init(this);
 	}
@@ -166,7 +174,7 @@ public class Game extends Canvas implements Runnable {
 		instance.setMaximumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 		instance.setMinimumSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
 
-		JFrame frame = new JFrame("game name");
+		JFrame frame = new JFrame("Holy Fire Knight");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setResizable(false);
 
@@ -176,6 +184,11 @@ public class Game extends Canvas implements Runnable {
 
 		if(DEBUG) {
 			frame.setAlwaysOnTop(true);
+		}
+		try {
+			frame.setIconImage(ImageIO.read(Game.class.getResourceAsStream("/gfx/game_icon.png")));
+		} catch(IOException e) {
+			e.printStackTrace();
 		}
 		frame.setVisible(true);
 

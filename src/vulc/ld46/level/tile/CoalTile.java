@@ -16,7 +16,7 @@ public class CoalTile extends Tile {
 		Tile.COBBLESTONE_FLOOR.render(screen, level, xt, yt);
 		screen.renderSprite(Atlas.getTile(1, 1), Level.tileToPos(xt), Level.tileToPos(yt));
 		if(level.getData(xt, yt) == 0) {
-			screen.renderSprite(Atlas.getItem(0, 1), Level.tileToPos(xt) + 4, Level.tileToPos(yt));
+			screen.renderSprite(Atlas.getItem(8, 9), Level.tileToPos(xt) + 4, Level.tileToPos(yt));
 		}
 	}
 
@@ -24,7 +24,9 @@ public class CoalTile extends Tile {
 		if(level.getData(xt, yt) != 0) return false;
 
 		Player player = level.player;
+		if(!player.hasFire) return false;
 		player.addCoal();
+		if(level.isTutorialLevel) level.tutorialTODO--;
 
 		level.setData((byte) 1, xt, yt);
 		return true;

@@ -5,11 +5,24 @@ import vulc.ld46.gfx.Screen;
 public class TextParticle extends Particle {
 
 	public static final String[] TEXTS = {
-	    "Welcome to [game name]", // TODO
-	    "Use WASD to move",
-	    "Use L to attack",
-	    "Use P to interact (chests and others)",
-	    "Use L (attack) to talk to the king"
+	    // brazier-welcome
+	    "Welcome to Holy Fire Knight",
+	    "Press WASD to move",
+	    "Press L to attack",
+	    "Press E to interact (chests, doors...)",
+	    "Press L (attack) to talk to the king",
+
+	    // room-0
+	    "Press E to get the Holy Fire", // id 5
+	    "If you don't use coal, the fire will extinguish",
+	    "Keep it alive!",
+	    "Press E to open the chest",
+	    "You can find weapons or food here",
+	    "Take coal to keep the fire alive",
+
+	    "Kill all enemies to open the door", // id 11
+
+	    "Use E to set the brazier on fire"
 	};
 
 	public String text;

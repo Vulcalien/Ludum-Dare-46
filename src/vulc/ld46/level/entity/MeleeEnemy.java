@@ -1,20 +1,33 @@
 package vulc.ld46.level.entity;
 
-import vulc.bitmap.IntBitmap;
-import vulc.ld46.Game;
+import vulc.bitmap.Bitmap;
+import vulc.ld46.gfx.Atlas;
 import vulc.ld46.gfx.Screen;
 import vulc.ld46.level.Level;
+import vulc.ld46.sfx.Sounds;
 
 public class MeleeEnemy extends Mob {
+
+	private int moveCount = 0;
+	private boolean moving = false;
+
+	private int confusedTime = 0;
 
 	public MeleeEnemy(int xt, int yt) {
 		super(Level.tileToPos(xt) + Level.T_SIZE / 2, Level.tileToPos(yt) + Level.T_SIZE / 2,
 		      100);
-		xr = yr = 12;
-		hp = 100;
+
+		xr = 6;
+		yr = 11;
 	}
 
 	public void tick() {
+		if(confusedTime > 0) {
+			confusedTime--;
+			move(0, 0);
+			return;
+		}
+
 		int speed = 1;
 		int xm = 0, ym = 0;
 
@@ -27,14 +40,31 @@ public class MeleeEnemy extends Mob {
 			else if(player.y > y) ym += speed;
 		}
 		move(xm, ym);
+
+		if(xm != 0 || ym != 0) {
+			moving = true;
+			moveCount++;
+		} else {
+			moving = false;
+		}
 	}
 
 	public void render(Screen screen) {
-		// TODO melee enemy sprite
-		screen.renderSprite(new IntBitmap(24, 24, 0xffff00), x - 12, y - 12);
-
-		if(Game.DEBUG) {
+		Bitmap<Integer> sprite = null;
+		if(moving) {
+			if(dir == 0) sprite = Atlas.getEntity(3, 6).getFlipped((moveCount / 10) % 2 == 0, false);
+			else if(dir == 1) sprite = Atlas.getEntity(1 + (moveCount / 10) % 2, 6).getFlipped(true, false);
+			else if(dir == 2) sprite = Atlas.getEntity(0, 6).getFlipped((moveCount / 10) % 2 == 0, false);
+			else if(dir == 3) sprite = Atlas.getEntity(1 + (moveCount / 10) % 2, 6).getFlipped(false, false);
+			else return;
+		} else {
+			if(dir == 0) sprite = Atlas.getEntity(2, 7);
+			else if(dir == 1) sprite = Atlas.getEntity(1, 7).getFlipped(true, false);
+			else if(dir == 2) sprite = Atlas.getEntity(0, 7);
+			else if(dir == 3) sprite = Atlas.getEntity(1, 7);
+			else return;
 		}
+		screen.renderSprite(sprite, x - 12, y - 12);
 	}
 
 	public void touchedBy(Entity e) {
@@ -48,8 +78,19 @@ public class MeleeEnemy extends Mob {
 
 		if(e instanceof Player) {
 			Player player = (Player) e;
-			player.damage(10, xk, yk, this);
+			player.damage(9, xk, yk, this);
 		}
+	}
+
+	public void die(Entity killer) {
+		super.die(killer);
+		Sounds.ENEMY_DIE.play();
+		level.remainingEnemies--;
+	}
+
+	public void damage(int dmg, int xKnockback, int yKnockback, Entity attacker) {
+		super.damage(dmg, xKnockback, yKnockback, attacker);
+		confusedTime = 15;
 	}
 
 }

@@ -1,30 +1,26 @@
 package vulc.ld46.level.entity;
 
-import java.awt.event.KeyEvent;
 import java.util.List;
 
 import vulc.bitmap.Bitmap;
 import vulc.ld46.Game;
 import vulc.ld46.gfx.Atlas;
 import vulc.ld46.gfx.Screen;
-import vulc.ld46.input.InputHandler;
-import vulc.ld46.input.InputHandler.Key;
-import vulc.ld46.input.InputHandler.KeyType;
+import vulc.ld46.gfx.menu.LoseFireMenu;
+import vulc.ld46.gfx.menu.YouDiedMenu;
+import vulc.ld46.input.Keys;
 import vulc.ld46.item.Item;
+import vulc.ld46.item.WeaponItem;
 import vulc.ld46.level.Level;
 import vulc.ld46.level.entity.particle.AttackParticle;
 import vulc.ld46.level.tile.Tile;
+import vulc.ld46.sfx.Sounds;
 
 public class Player extends Mob {
 
 	public static final int FIRE_HP = 60 * 60; // ticks
 
-	private final InputHandler input;
-
-	private final Key w, a, s, d,
-	        attack, interact;
-
-	public Item weapon = null;
+	public WeaponItem weapon = null;
 
 	public boolean hasFire = false;
 	public int fireHp = 0;
@@ -37,33 +33,28 @@ public class Player extends Mob {
 	private int invulnerable = 0;
 
 	public Player() {
-		super(-1, -1, 13);
-		this.input = Game.INPUT;
-
-		w = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_W);
-		a = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_A);
-		s = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_S);
-		d = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_D);
-
-		attack = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_L);
-		interact = input.new Key(KeyType.KEYBOARD, KeyEvent.VK_P);
+		super(-1, -1, 100);
 
 		xr = 6;
 		yr = 11;
+
+		weapon = (WeaponItem) Item.SWORD_0;
 	}
 
 	public void tick() {
 		ticks++;
+
+		if(level.game.menu != null) return;
 
 		if(invulnerable > 0) invulnerable--;
 
 		int speed = 2;
 		int xm = 0, ym = 0;
 
-		if(w.isKeyDown()) ym -= speed;
-		if(a.isKeyDown()) xm -= speed;
-		if(s.isKeyDown()) ym += speed;
-		if(d.isKeyDown()) xm += speed;
+		if(Keys.w.isKeyDown()) ym -= speed;
+		if(Keys.a.isKeyDown()) xm -= speed;
+		if(Keys.s.isKeyDown()) ym += speed;
+		if(Keys.d.isKeyDown()) xm += speed;
 
 		move(xm, ym);
 
@@ -75,8 +66,8 @@ public class Player extends Mob {
 		}
 
 		// attack
-		if(attack.isPressed()) {
-			int range = 12;
+		if(Keys.attack0.isPressed() || Keys.attack1.isPressed()) {
+			int range = 14 + (weapon != null ? weapon.range : 0);
 			// x attack radius, y ...
 			int xar = 12, yar = 4;
 
@@ -86,7 +77,7 @@ public class Player extends Mob {
 			else if(dir == 3) attack(x + range - yar, y - xar, x + range + yar, y + xar);
 		}
 
-		if(interact.isPressed()) {
+		if(Keys.interact0.isPressed() || Keys.interact1.isPressed()) {
 			int range = 18;
 
 			if(dir == 0) interact(x, y - range);
@@ -97,7 +88,7 @@ public class Player extends Mob {
 
 		if(hasFire) {
 			fireHp--;
-			if(fireHp < 0) lose();
+			if(fireHp < 0) loseFire();
 		}
 	}
 
@@ -123,18 +114,20 @@ public class Player extends Mob {
 		}
 
 		if(Game.DEBUG) {
-			screen.write("dir:" + dir + "\n"
-			             + "hp:" + hp,
+			screen.write("dir:" + dir
+			             + "\nhp:" + hp
+			             + "\ntutorial todo:" + level.tutorialTODO
+			             + "\nlevel enemies:" + level.remainingEnemies,
 			             0xffffff, 1, 1);
 		}
 	}
 
 	public void attack(int x0, int y0, int x1, int y1) {
-		// attack delay
-		if(ticks - lastAttack < 15) return;
+		// attack cooldown
+		if(ticks - lastAttack < 15 + (weapon != null ? weapon.cooldown : 0)) return;
 		lastAttack = ticks;
 
-		int knockback = 10;
+		int knockback = 12 + (weapon != null ? weapon.knockback : 0);
 		int xk = 0, yk = 0;
 
 		if(dir == 0) yk -= knockback;
@@ -148,10 +141,11 @@ public class Player extends Mob {
 
 			if(e instanceof Mob) {
 				Mob mob = (Mob) e;
-				mob.damage(10, xk, yk, this);
+				mob.damage(10 + (weapon != null ? weapon.damage : 0), xk, yk, this);
 			}
 		}
 		level.addEntity(new AttackParticle(x0, y0, dir));
+		Sounds.SWORD_ATTACK.play();
 	}
 
 	public void interact(int x, int y) {
@@ -173,18 +167,34 @@ public class Player extends Mob {
 		if(invulnerable == 0) {
 			super.damage(dmg, xKnockback, yKnockback, attacker);
 			invulnerable = 60;
+			Sounds.HURT.play();
 		}
 	}
 
-	private void lose() {
+	public void die(Entity killer) {
+		super.die(killer);
+		level.game.menu = new YouDiedMenu(level.game);
+	}
+
+	private void loseFire() {
+		level.game.menu = new LoseFireMenu(level.game);
 	}
 
 	public void addCoal() {
 		fireHp = FIRE_HP;
+		Sounds.FIRE.play();
 	}
 
 	public void eatFood() {
-		// TODO
+		hp += 30;
+		if(hp > maxHp) hp = maxHp;
+
+		Sounds.EAT_FOOD.play();
+	}
+
+	public void respawn() {
+		this.hp = maxHp;
+		this.fireHp = FIRE_HP;
 	}
 
 }

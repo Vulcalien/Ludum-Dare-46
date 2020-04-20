@@ -5,6 +5,7 @@ import vulc.ld46.gfx.Screen;
 import vulc.ld46.level.Level;
 import vulc.ld46.level.entity.Entity;
 import vulc.ld46.level.entity.Player;
+import vulc.ld46.sfx.Sounds;
 
 public class FireTile extends Tile {
 
@@ -23,8 +24,15 @@ public class FireTile extends Tile {
 	}
 
 	public boolean interactOn(Entity e, Level level, int xt, int yt) {
+		if(level.isTutorialLevel && !level.player.hasFire) {
+			level.tutorialTODO--;
+		}
+
 		level.player.hasFire = true;
 		level.player.fireHp = Player.FIRE_HP;
+
+		Sounds.FIRE.play();
+
 		return true;
 	}
 

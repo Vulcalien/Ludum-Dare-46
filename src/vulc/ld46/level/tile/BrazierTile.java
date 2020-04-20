@@ -4,6 +4,7 @@ import vulc.ld46.gfx.Atlas;
 import vulc.ld46.gfx.Screen;
 import vulc.ld46.level.Level;
 import vulc.ld46.level.entity.Entity;
+import vulc.ld46.sfx.Sounds;
 
 public class BrazierTile extends WallTile {
 
@@ -27,8 +28,12 @@ public class BrazierTile extends WallTile {
 	}
 
 	public boolean interactOn(Entity e, Level level, int xt, int yt) {
-		if(level.player.hasFire) level.won = true;
-		return true;
+		if(level.player.hasFire) {
+			level.won = true;
+			Sounds.FIRE.play();
+			return true;
+		}
+		return false;
 	}
 
 }

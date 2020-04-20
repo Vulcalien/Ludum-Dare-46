@@ -9,11 +9,20 @@ public class King extends Mob {
 
 	private static final String[][] TEXTS = {
 	    new String[] {
-	        "text TODO", // TODO
+	        "Hello! I am the King!",
+	        "I need that you do a thing for me.",
+	        "I love to eat, but I cannot cook food",
+	        "because I have not the fire!",
+	        "Lately, the fire that was here, has extinguished",
+	        "so I need you to get the Holy Fire.",
+	        "Bring it to me, so I can eat again!",
+	        "It is inside the castle's underground.",
+	        "Go to the door at your right and press E.",
+	        "Good luck!"
 	    },
 	    new String[] {
-
-		}
+	        "What are you waiting for? Put the fire there"
+	    }
 	};
 
 	private final String[] dialogueSet;

@@ -32,4 +32,12 @@ public class InstructionsMenu extends Menu {
 		screen.setFont(Screen.NORMAL_FONT);
 	}
 
+	public boolean levelTicks() {
+		return false;
+	}
+
+	public boolean levelRenders() {
+		return false;
+	}
+
 }
